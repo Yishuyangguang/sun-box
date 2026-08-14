@@ -1,6 +1,6 @@
 /**
- * 一束阳光 · 文件快递柜与云盘系统 (完整增强版)
- * 依赖绑定：
+ * 一束阳光 · 专属文件快递柜系统核心后端
+ * 绑定依赖：
  * - env.KV      (Cloudflare KV 命名空间)
  * - env.R2      (Cloudflare R2 存储桶)
  * - env.ADMIN   (管理员密码环境变量，默认 5214)
@@ -45,7 +45,7 @@ export default {
           return new Response(JSON.stringify({ success: false, error: "该取件码已过期销毁" }), { headers: corsHeaders });
         }
 
-        // 纯文本便签阅后即焚原子计数
+        // 便签阅后即焚原子计数
         if (record.type === "text" && record.maxDownloads > 0) {
           record.downloadCount = (record.downloadCount || 0) + 1;
           if (record.downloadCount >= record.maxDownloads) {
@@ -61,7 +61,7 @@ export default {
       if (pathname === "/api/box/create" && request.method === "POST") {
         const auth = request.headers.get("x-send-auth");
         if (auth !== SEND_KEY && auth !== ADMIN_KEY) {
-          return new Response(JSON.stringify({ success: false, error: "圈子发件口令错误" }), { headers: corsHeaders });
+          return new Response(JSON.stringify({ success: false, error: "发件口令错误" }), { headers: corsHeaders });
         }
 
         const body = await request.json();
@@ -85,11 +85,11 @@ export default {
         return new Response(JSON.stringify({ success: true, code }), { headers: corsHeaders });
       }
 
-      // 3. 快递柜大文件分片初始化
+      // 3. 大文件并发分片初始化
       if (pathname === "/api/box/init-multipart" && request.method === "POST") {
         const auth = request.headers.get("x-send-auth");
         if (auth !== SEND_KEY && auth !== ADMIN_KEY) {
-          return new Response(JSON.stringify({ success: false, error: "圈子发件口令错误" }), { headers: corsHeaders });
+          return new Response(JSON.stringify({ success: false, error: "发件口令错误" }), { headers: corsHeaders });
         }
 
         const body = await request.json();
@@ -116,17 +116,7 @@ export default {
         return new Response(JSON.stringify({ success: true, uploadId: multipartUpload.uploadId, r2Key, code }), { headers: corsHeaders });
       }
 
-      // 4. 云盘大文件分片初始化
-      if (pathname === "/api/pan/init-multipart" && request.method === "POST") {
-        if (request.headers.get("x-custom-auth") !== ADMIN_KEY) {
-          return new Response(JSON.stringify({ success: false, error: "管理员权限拒绝" }), { headers: corsHeaders });
-        }
-        const { r2Key } = await request.json();
-        const multipartUpload = await env.R2.createMultipartUpload(r2Key);
-        return new Response(JSON.stringify({ success: true, uploadId: multipartUpload.uploadId }), { headers: corsHeaders });
-      }
-
-      // 5. 通用分片上传接口 (供快递柜与云盘共用)
+      // 4. 并发分片上传
       if (pathname === "/api/box/upload-part" && request.method === "POST") {
         const auth = request.headers.get("x-send-auth") || request.headers.get("x-custom-auth");
         if (auth !== SEND_KEY && auth !== ADMIN_KEY) {
@@ -142,7 +132,7 @@ export default {
         return new Response(JSON.stringify({ success: true, etag: part.etag }), { headers: corsHeaders });
       }
 
-      // 6. 快递柜分片合并
+      // 5. 分片合并
       if (pathname === "/api/box/complete-multipart" && request.method === "POST") {
         const body = await request.json();
         const multipartUpload = env.R2.resumeMultipartUpload(body.r2Key, body.uploadId);
@@ -150,18 +140,7 @@ export default {
         return new Response(JSON.stringify({ success: true, code: body.code }), { headers: corsHeaders });
       }
 
-      // 7. 云盘分片合并
-      if (pathname === "/api/pan/complete-multipart" && request.method === "POST") {
-        if (request.headers.get("x-custom-auth") !== ADMIN_KEY) {
-          return new Response(JSON.stringify({ success: false, error: "管理员权限拒绝" }), { headers: corsHeaders });
-        }
-        const { r2Key, uploadId, parts } = await request.json();
-        const multipartUpload = env.R2.resumeMultipartUpload(r2Key, uploadId);
-        await multipartUpload.complete(parts);
-        return new Response(JSON.stringify({ success: true }), { headers: corsHeaders });
-      }
-
-      // 8. 管理员查看活跃取件码
+      // 6. 管理员监控列表
       if (pathname === "/api/box/admin-list" && request.method === "GET") {
         if (request.headers.get("x-custom-auth") !== ADMIN_KEY) {
           return new Response(JSON.stringify({ success: false, error: "管理员权限拒绝" }), { headers: corsHeaders });
@@ -176,7 +155,7 @@ export default {
         return new Response(JSON.stringify({ success: true, data: results }), { headers: corsHeaders });
       }
 
-      // 9. 管理员销毁取件码
+      // 7. 销毁取件码
       if (pathname === "/api/box/admin-delete" && request.method === "POST") {
         if (request.headers.get("x-custom-auth") !== ADMIN_KEY) {
           return new Response(JSON.stringify({ success: false, error: "管理员权限拒绝" }), { headers: corsHeaders });
@@ -187,7 +166,7 @@ export default {
         return new Response(JSON.stringify({ success: true }), { headers: corsHeaders });
       }
 
-      // 10. 文件下载 (含 RFC 5987 中文防乱码头)
+      // 8. 高速下载 (支持 Range 分块多线程加速与 RFC 5987 中文防乱码)
       if (pathname === "/api/download" && request.method === "GET") {
         const key = url.searchParams.get("key");
         const boxCode = url.searchParams.get("boxCode");
@@ -209,8 +188,14 @@ export default {
           }
         }
 
-        const object = await env.R2.get(key);
-        if (!object) return new Response("文件不存在或已删除", { status: 404 });
+        // 注入 Range 头实现多线程断点分块加速
+        const range = request.headers.get("range");
+        const object = await env.R2.get(key, {
+          range: request.headers,
+          onlyIf: request.headers,
+        });
+
+        if (!object) return new Response("文件不存在或已销毁", { status: 404 });
 
         const rawFilename = key.split("/").pop();
         const encodedFilename = encodeURIComponent(rawFilename);
@@ -219,46 +204,16 @@ export default {
         object.writeHttpMetadata(headers);
         headers.set("etag", object.httpEtag);
         headers.set("Access-Control-Allow-Origin", "*");
-        // RFC 5987 国际标准中文防乱码头
+        headers.set("Accept-Ranges", "bytes");
+        headers.set("Cache-Control", "public, max-age=86400");
         headers.set("Content-Disposition", `attachment; filename="${encodedFilename}"; filename*=UTF-8''${encodedFilename}`);
 
+        if (range && object.range) {
+          headers.set("Content-Range", `bytes ${object.range.offset}-${object.range.offset + object.range.length - 1}/${object.size}`);
+          return new Response(object.body, { status: 206, headers });
+        }
+
         return new Response(object.body, { headers });
-      }
-
-      // 11. 管理员云盘文件列表
-      if (pathname === "/api/list" && request.method === "GET") {
-        if (request.headers.get("x-custom-auth") !== ADMIN_KEY) {
-          return new Response(JSON.stringify({ success: false, error: "无权访问" }), { headers: corsHeaders });
-        }
-        const listed = await env.R2.list({ prefix: "pan/" });
-        const data = listed.objects.map(o => ({
-          name: o.key.replace(/^pan\//, ""),
-          key: o.key,
-          size: o.size,
-          uploadTime: o.uploaded
-        }));
-        return new Response(JSON.stringify({ success: true, data }), { headers: corsHeaders });
-      }
-
-      // 12. 容量统计
-      if (pathname === "/api/stats" && request.method === "GET") {
-        if (request.headers.get("x-custom-auth") !== ADMIN_KEY) {
-          return new Response(JSON.stringify({ success: false, error: "无权查看" }), { headers: corsHeaders });
-        }
-        const listed = await env.R2.list();
-        let totalBytes = 0;
-        listed.objects.forEach(obj => totalBytes += obj.size);
-        return new Response(JSON.stringify({ success: true, totalBytes, totalCount: listed.objects.length }), { headers: corsHeaders });
-      }
-
-      // 13. 删除云盘文件
-      if (pathname === "/api/delete" && request.method === "POST") {
-        if (request.headers.get("x-custom-auth") !== ADMIN_KEY) {
-          return new Response(JSON.stringify({ success: false, error: "无权操作" }), { headers: corsHeaders });
-        }
-        const { key } = await request.json();
-        await env.R2.delete(key);
-        return new Response(JSON.stringify({ success: true }), { headers: corsHeaders });
       }
 
       return env.ASSETS ? await env.ASSETS.fetch(request) : new Response("Not Found", { status: 404 });
