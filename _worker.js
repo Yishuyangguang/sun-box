@@ -1,19 +1,11 @@
-/**
- * 一束阳光 · 专属文件快递柜系统核心后端 (三网加速增强版)
- * 依赖绑定：
- * - env.KV      (Cloudflare KV 命名空间)
- * - env.R2      (Cloudflare R2 存储桶)
- * - env.ADMIN   (管理员密码环境变量，默认 5214)
- * - env.SEND_PWD (圈子发件密码环境变量，默认 5214)
- */
-
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
     const pathname = url.pathname;
 
-    const ADMIN_KEY = env.ADMIN || "5214";
-    const SEND_KEY = env.SEND_PWD || env.ADMIN || "5214";
+    // 直接从 Cloudflare 后台读取变量，代码中不保留任何默认明文密码
+    const ADMIN_KEY = env.ADMIN || "";
+    const SEND_KEY = env.SEND_PWD || env.ADMIN || "";
 
     if (request.method === "OPTIONS") {
       return new Response(null, {
