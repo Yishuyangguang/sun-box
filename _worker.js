@@ -1,5 +1,10 @@
 /**
- * 一束阳光 · 文件快递柜与云盘系统 (纯净精炼版)
+ * 一束阳光 · 文件快递柜与云盘系统 (完整增强版)
+ * 依赖绑定：
+ * - env.KV      (Cloudflare KV 命名空间)
+ * - env.R2      (Cloudflare R2 存储桶)
+ * - env.ADMIN   (管理员密码环境变量，默认 5214)
+ * - env.SEND_PWD (圈子发件密码环境变量，默认 5214)
  */
 
 export default {
@@ -40,6 +45,7 @@ export default {
           return new Response(JSON.stringify({ success: false, error: "该取件码已过期销毁" }), { headers: corsHeaders });
         }
 
+        // 纯文本便签阅后即焚原子计数
         if (record.type === "text" && record.maxDownloads > 0) {
           record.downloadCount = (record.downloadCount || 0) + 1;
           if (record.downloadCount >= record.maxDownloads) {
@@ -79,7 +85,7 @@ export default {
         return new Response(JSON.stringify({ success: true, code }), { headers: corsHeaders });
       }
 
-      // 3. 分片上传初始化 (突破 100MB 限制)
+      // 3. 快递柜大文件分片初始化
       if (pathname === "/api/box/init-multipart" && request.method === "POST") {
         const auth = request.headers.get("x-send-auth");
         if (auth !== SEND_KEY && auth !== ADMIN_KEY) {
@@ -110,9 +116,19 @@ export default {
         return new Response(JSON.stringify({ success: true, uploadId: multipartUpload.uploadId, r2Key, code }), { headers: corsHeaders });
       }
 
-      // 4. 分片传输
+      // 4. 云盘大文件分片初始化
+      if (pathname === "/api/pan/init-multipart" && request.method === "POST") {
+        if (request.headers.get("x-custom-auth") !== ADMIN_KEY) {
+          return new Response(JSON.stringify({ success: false, error: "管理员权限拒绝" }), { headers: corsHeaders });
+        }
+        const { r2Key } = await request.json();
+        const multipartUpload = await env.R2.createMultipartUpload(r2Key);
+        return new Response(JSON.stringify({ success: true, uploadId: multipartUpload.uploadId }), { headers: corsHeaders });
+      }
+
+      // 5. 通用分片上传接口 (供快递柜与云盘共用)
       if (pathname === "/api/box/upload-part" && request.method === "POST") {
-        const auth = request.headers.get("x-send-auth");
+        const auth = request.headers.get("x-send-auth") || request.headers.get("x-custom-auth");
         if (auth !== SEND_KEY && auth !== ADMIN_KEY) {
           return new Response(JSON.stringify({ success: false, error: "无权上传" }), { headers: corsHeaders });
         }
@@ -126,7 +142,7 @@ export default {
         return new Response(JSON.stringify({ success: true, etag: part.etag }), { headers: corsHeaders });
       }
 
-      // 5. 完成合并
+      // 6. 快递柜分片合并
       if (pathname === "/api/box/complete-multipart" && request.method === "POST") {
         const body = await request.json();
         const multipartUpload = env.R2.resumeMultipartUpload(body.r2Key, body.uploadId);
@@ -134,7 +150,18 @@ export default {
         return new Response(JSON.stringify({ success: true, code: body.code }), { headers: corsHeaders });
       }
 
-      // 6. 管理员监控列表
+      // 7. 云盘分片合并
+      if (pathname === "/api/pan/complete-multipart" && request.method === "POST") {
+        if (request.headers.get("x-custom-auth") !== ADMIN_KEY) {
+          return new Response(JSON.stringify({ success: false, error: "管理员权限拒绝" }), { headers: corsHeaders });
+        }
+        const { r2Key, uploadId, parts } = await request.json();
+        const multipartUpload = env.R2.resumeMultipartUpload(r2Key, uploadId);
+        await multipartUpload.complete(parts);
+        return new Response(JSON.stringify({ success: true }), { headers: corsHeaders });
+      }
+
+      // 8. 管理员查看活跃取件码
       if (pathname === "/api/box/admin-list" && request.method === "GET") {
         if (request.headers.get("x-custom-auth") !== ADMIN_KEY) {
           return new Response(JSON.stringify({ success: false, error: "管理员权限拒绝" }), { headers: corsHeaders });
@@ -149,7 +176,7 @@ export default {
         return new Response(JSON.stringify({ success: true, data: results }), { headers: corsHeaders });
       }
 
-      // 7. 销毁取件码
+      // 9. 管理员销毁取件码
       if (pathname === "/api/box/admin-delete" && request.method === "POST") {
         if (request.headers.get("x-custom-auth") !== ADMIN_KEY) {
           return new Response(JSON.stringify({ success: false, error: "管理员权限拒绝" }), { headers: corsHeaders });
@@ -160,7 +187,7 @@ export default {
         return new Response(JSON.stringify({ success: true }), { headers: corsHeaders });
       }
 
-      // 8. 文件下载 (支持核销)
+      // 10. 文件下载 (含 RFC 5987 中文防乱码头)
       if (pathname === "/api/download" && request.method === "GET") {
         const key = url.searchParams.get("key");
         const boxCode = url.searchParams.get("boxCode");
@@ -185,15 +212,20 @@ export default {
         const object = await env.R2.get(key);
         if (!object) return new Response("文件不存在或已删除", { status: 404 });
 
+        const rawFilename = key.split("/").pop();
+        const encodedFilename = encodeURIComponent(rawFilename);
+
         const headers = new Headers();
         object.writeHttpMetadata(headers);
         headers.set("etag", object.httpEtag);
         headers.set("Access-Control-Allow-Origin", "*");
-        headers.set("Content-Disposition", `attachment; filename="${encodeURIComponent(key.split('/').pop())}"`);
+        // RFC 5987 国际标准中文防乱码头
+        headers.set("Content-Disposition", `attachment; filename="${encodedFilename}"; filename*=UTF-8''${encodedFilename}`);
+
         return new Response(object.body, { headers });
       }
 
-      // 9. 管理员云盘列表
+      // 11. 管理员云盘文件列表
       if (pathname === "/api/list" && request.method === "GET") {
         if (request.headers.get("x-custom-auth") !== ADMIN_KEY) {
           return new Response(JSON.stringify({ success: false, error: "无权访问" }), { headers: corsHeaders });
@@ -208,17 +240,7 @@ export default {
         return new Response(JSON.stringify({ success: true, data }), { headers: corsHeaders });
       }
 
-      // 10. 管理员直接存入云盘
-      if (pathname === "/api/upload" && request.method === "POST") {
-        if (request.headers.get("x-custom-auth") !== ADMIN_KEY) {
-          return new Response(JSON.stringify({ success: false, error: "无权上传" }), { headers: corsHeaders });
-        }
-        const key = url.searchParams.get("key");
-        await env.R2.put(key, request.body);
-        return new Response(JSON.stringify({ success: true }), { headers: corsHeaders });
-      }
-
-      // 11. 容量统计
+      // 12. 容量统计
       if (pathname === "/api/stats" && request.method === "GET") {
         if (request.headers.get("x-custom-auth") !== ADMIN_KEY) {
           return new Response(JSON.stringify({ success: false, error: "无权查看" }), { headers: corsHeaders });
@@ -229,7 +251,7 @@ export default {
         return new Response(JSON.stringify({ success: true, totalBytes, totalCount: listed.objects.length }), { headers: corsHeaders });
       }
 
-      // 12. 删除云盘文件
+      // 13. 删除云盘文件
       if (pathname === "/api/delete" && request.method === "POST") {
         if (request.headers.get("x-custom-auth") !== ADMIN_KEY) {
           return new Response(JSON.stringify({ success: false, error: "无权操作" }), { headers: corsHeaders });
