@@ -4,6 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>一束阳光 - 专属文件快递柜</title>
+  
+  <!-- 🚀 三网与移动 4G/5G 极速网络预连接加速 -->
+  <link rel="dns-prefetch" href="//dash.cloudflare.com">
+  <link rel="preconnect" href="/" crossorigin>
+
   <!-- 萌系太阳矢量 Favicon -->
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='27' fill='none' stroke='%23f59e0b' stroke-width='4' stroke-linecap='round' stroke-dasharray='2 10'/%3E%3Ccircle cx='32' cy='32' r='19' fill='%23fbbf24'/%3E%3Ccircle cx='23' cy='35' r='2.8' fill='%23fb7185' opacity='0.75'/%3E%3Ccircle cx='41' cy='35' r='2.8' fill='%23fb7185' opacity='0.75'/%3E%3Ccircle cx='25' cy='29' r='2.3' fill='%231c1917'/%3E%3Ccircle cx='39' cy='29' r='2.3' fill='%231c1917'/%3E%3Ccircle cx='24.2' cy='28.2' r='0.8' fill='%23ffffff'/%3E%3Ccircle cx='38.2' cy='28.2' r='0.8' fill='%23ffffff'/%3E%3Cpath d='M28 33 Q32 37 36 33' stroke='%231c1917' stroke-width='1.8' stroke-linecap='round' fill='none'/%3E%3C/svg%3E">
   
@@ -24,80 +29,80 @@
       color: var(--text-main);
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
       min-height: 100vh;
-      padding: 24px 16px 60px;
+      padding: 20px 16px 60px;
       -webkit-font-smoothing: antialiased;
     }
     a { color: inherit; text-decoration: none; }
     button { font: inherit; cursor: pointer; border: none; background: none; }
     .glass {
-      background: rgba(255, 255, 255, 0.8);
+      background: rgba(255, 255, 255, 0.82);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
       border: 1px solid rgba(245, 158, 11, 0.35);
       box-shadow: 0 10px 25px rgba(0, 0, 0, 0.04), inset 0 2px 2px rgba(255, 255, 255, 0.9);
       border-radius: 20px;
     }
-    .container { max-width: 800px; margin: 0 auto; position: relative; z-index: 1; }
+    .container { max-width: 780px; margin: 0 auto; position: relative; z-index: 1; }
     
     body:not(.admin-mode) .admin-only { display: none !important; }
     body.admin-mode .guest-only { display: none !important; }
 
     /* 顶部导航 */
     .header {
-      padding: 14px 0 20px;
+      padding: 12px 0 18px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       border-bottom: 1px dashed rgba(245, 158, 11, 0.35);
-      margin-bottom: 24px;
+      margin-bottom: 22px;
       flex-wrap: wrap;
-      gap: 15px;
+      gap: 12px;
     }
-    .logo-area { display: flex; align-items: center; gap: 12px; }
+    .logo-area { display: flex; align-items: center; gap: 10px; }
     @keyframes sunFloat { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-3px) rotate(4deg); } }
     .logo-icon-svg {
-      width: 44px; height: 44px;
+      width: 42px; height: 42px;
       animation: sunFloat 3.5s infinite ease-in-out;
       filter: drop-shadow(0 4px 10px rgba(245, 158, 11, 0.4));
     }
-    .logo-text { font-size: 22px; font-weight: 800; color: #1c1917; letter-spacing: -0.5px; }
-    .header-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+    .logo-text { font-size: 21px; font-weight: 800; color: #1c1917; letter-spacing: -0.5px; }
+    .header-actions { display: flex; gap: 8px; flex-wrap: wrap; }
     .nav-link {
-      padding: 8px 16px;
-      border-radius: 20px;
+      padding: 7px 15px;
+      border-radius: 18px;
       color: #b45309;
-      font-size: 13.5px;
+      font-size: 13px;
       font-weight: 700;
       border: 1px solid rgba(245, 158, 11, 0.35);
       background: rgba(255, 255, 255, 0.85);
       transition: all 0.2s ease;
-      box-shadow: 0 2px 8px rgba(245, 158, 11, 0.1);
+      box-shadow: 0 2px 6px rgba(245, 158, 11, 0.08);
     }
     .nav-link:hover {
       background: #f59e0b;
       color: #fff;
-      box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.25);
       transform: translateY(-1px);
     }
 
     /* 核心取件箱 */
     .pickup-box {
-      padding: 34px 24px;
+      padding: 32px 20px;
       text-align: center;
-      margin-bottom: 25px;
+      margin-bottom: 22px;
     }
-    .pickup-title { font-size: 22px; font-weight: 800; color: #b45309; margin-bottom: 8px; }
-    .pickup-subtitle { font-size: 13px; color: var(--text-muted); margin-bottom: 22px; }
+    .pickup-title { font-size: 21px; font-weight: 800; color: #b45309; margin-bottom: 6px; }
+    .pickup-subtitle { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; }
     .pickup-input-group {
-      max-width: 480px;
-      margin: 0 auto 15px auto;
+      max-width: 460px;
+      margin: 0 auto 12px auto;
       display: flex;
       gap: 10px;
     }
     .pickup-input {
       flex: 1;
-      padding: 14px 20px;
-      border-radius: 16px;
+      padding: 13px 18px;
+      border-radius: 14px;
       border: 2px solid rgba(245, 158, 11, 0.4);
       outline: none;
       font-size: 18px;
@@ -111,13 +116,13 @@
     }
     .pickup-input:focus { border-color: #f59e0b; box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.2); }
     .pickup-btn {
-      padding: 0 28px;
-      border-radius: 16px;
+      padding: 0 26px;
+      border-radius: 14px;
       background: linear-gradient(135deg, #f59e0b, #d97706);
       color: white;
       font-weight: 700;
-      font-size: 15.5px;
-      box-shadow: 0 6px 20px rgba(245, 158, 11, 0.35);
+      font-size: 15px;
+      box-shadow: 0 6px 18px rgba(245, 158, 11, 0.35);
       transition: 0.2s;
     }
     .pickup-btn:hover { filter: brightness(1.08); transform: translateY(-1px); }
@@ -125,7 +130,7 @@
     /* 取件结果卡片 */
     #pickupResultArea { display: none; margin-top: 20px; text-align: left; }
     .result-card {
-      padding: 22px;
+      padding: 20px;
       border-radius: 16px;
       background: rgba(255, 255, 255, 0.95);
       border: 1px solid rgba(245, 158, 11, 0.3);
@@ -144,26 +149,42 @@
       overflow-y: auto;
     }
 
-    /* 管理看板 */
+    /* 管理看板与全局搜索 */
     .admin-dashboard { padding: 22px; margin-top: 25px; }
+    .search-input-box {
+      width: 100%;
+      padding: 12px 18px;
+      margin-bottom: 16px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.95);
+      border: 1.5px solid rgba(245, 158, 11, 0.4);
+      font-size: 14px;
+      font-weight: 600;
+      outline: none;
+      transition: 0.2s;
+    }
+    .search-input-box:focus {
+      border-color: #f59e0b;
+      box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.18);
+    }
     .storage-widget {
-      padding: 14px 18px;
-      margin-bottom: 20px;
+      padding: 12px 16px;
+      margin-bottom: 16px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
       gap: 10px;
-      font-size: 13px;
+      font-size: 12.5px;
       font-weight: 600;
       color: #b45309;
-      background: rgba(255, 255, 255, 0.6);
-      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.65);
+      border-radius: 12px;
     }
     .storage-bar-bg {
       width: 100%;
-      max-width: 220px;
-      height: 8px;
+      max-width: 200px;
+      height: 7px;
       background: rgba(245, 158, 11, 0.2);
       border-radius: 10px;
       overflow: hidden;
@@ -178,7 +199,7 @@
       cursor: pointer;
       font-weight: 800;
       color: #b45309;
-      font-size: 15px;
+      font-size: 14.5px;
       background: rgba(245, 158, 11, 0.15);
       padding: 3px 8px;
       border-radius: 6px;
@@ -194,8 +215,14 @@
       border-color: transparent;
       transform: translateY(-1px);
     }
+    .highlight-match {
+      background: #fde047;
+      padding: 0 2px;
+      border-radius: 3px;
+      font-weight: bold;
+    }
 
-    /* 弹窗通用样式 */
+    /* 弹窗样式 */
     .modal-overlay {
       position: fixed; inset: 0;
       background: rgba(0, 0, 0, 0.45);
@@ -206,12 +233,12 @@
       padding: 16px;
     }
     .modal-overlay.active { display: flex; opacity: 1; }
-    .modal-card { width: 100%; max-width: 440px; padding: 26px; }
-    .form-group { margin-bottom: 14px; text-align: left; }
-    .form-label { display: block; font-size: 12.5px; font-weight: 700; color: #b45309; margin-bottom: 6px; }
+    .modal-card { width: 100%; max-width: 440px; padding: 24px; }
+    .form-group { margin-bottom: 13px; text-align: left; }
+    .form-label { display: block; font-size: 12.5px; font-weight: 700; color: #b45309; margin-bottom: 5px; }
     .form-control {
       width: 100%;
-      padding: 12px 14px;
+      padding: 11px 13px;
       color: var(--text-main);
       outline: none;
       font-size: 16px;
@@ -223,7 +250,7 @@
     .form-control:focus { border-color: #f59e0b; box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.15); }
     .btn-submit {
       width: 100%;
-      padding: 13px;
+      padding: 12px;
       border-radius: 12px;
       background: linear-gradient(135deg, #f59e0b, #d97706);
       color: #fff;
@@ -236,14 +263,14 @@
     .section-tab-bar {
       display: flex;
       gap: 10px;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
     }
     .tab-item-btn {
       flex: 1;
       padding: 8px;
       border-radius: 10px;
       font-weight: 700;
-      font-size: 13.5px;
+      font-size: 13px;
       color: #b45309;
       background: rgba(245, 158, 11, 0.12);
       transition: 0.2s;
@@ -256,23 +283,22 @@
     /* 传输进度 Toast */
     #transfer-toast {
       position: fixed; bottom: 20px; right: 20px; z-index: 3000;
-      width: 320px; padding: 16px 20px;
+      width: 310px; padding: 14px 18px;
       background: rgba(255, 255, 255, 0.95);
       backdrop-filter: blur(16px);
       border: 1px solid rgba(245, 158, 11, 0.4);
-      border-radius: 18px;
+      border-radius: 16px;
       box-shadow: 0 12px 30px rgba(245, 158, 11, 0.25);
       transform: translateY(120px); opacity: 0; transition: 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
     #transfer-toast.show { transform: translateY(0); opacity: 1; }
-    .transfer-bar-bg { width: 100%; height: 7px; background: rgba(245, 158, 11, 0.2); border-radius: 10px; overflow: hidden; margin: 8px 0; }
+    .transfer-bar-bg { width: 100%; height: 6px; background: rgba(245, 158, 11, 0.2); border-radius: 10px; overflow: hidden; margin: 8px 0; }
     .transfer-bar-fill { height: 100%; background: linear-gradient(90deg, #f59e0b, #3b82f6); width: 0%; transition: width 0.1s linear; }
   </style>
 </head>
 <body>
 
   <div class="container">
-    <!-- 顶部 Header -->
     <header class="header">
       <div class="logo-area">
         <svg class="logo-icon-svg" viewBox="0 0 64 64">
@@ -295,16 +321,15 @@
       </div>
     </header>
 
-    <!-- 📦 核心取件箱（首屏） -->
+    <!-- 📦 取件箱主卡片 -->
     <div class="pickup-box glass">
       <div class="pickup-title">📦 阳光文件快递柜</div>
-      <div class="pickup-subtitle">输入 5 位取件码，极速提取加密便签或云端文件</div>
+      <div class="pickup-subtitle">输入 5 位取件码，三网极速提取便签或云端文件</div>
       <div class="pickup-input-group">
         <input type="text" id="pickupCodeInput" class="pickup-input" placeholder="输入5位取件码" maxlength="6" autocomplete="off" onkeypress="if(event.key==='Enter') executePickup()">
         <button class="pickup-btn" onclick="executePickup()">✨ 提取</button>
       </div>
 
-      <!-- 取件内容展示区 -->
       <div id="pickupResultArea">
         <div class="result-card">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
@@ -318,22 +343,25 @@
           </div>
           <div id="resultFileWrap" style="display: none; margin-top: 12px;">
             <div style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 10px;" id="resultFileSize">文件体积：0 MB</div>
-            <button id="resultDownloadBtn" class="btn-submit" style="padding: 11px;">⬇️ 立即高速下载文件</button>
+            <button id="resultDownloadBtn" class="btn-submit" style="padding: 11px;">⚡ 极速下载文件 (4G/5G 多线程加速)</button>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- 💾 管理员专属看板 -->
+    <!-- 📊 管理看板与全局双模搜索 -->
     <div class="admin-only glass admin-dashboard">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
-        <h3 style="font-size:16px; font-weight:800; color:#b45309;">📊 活跃取件码监控中枢</h3>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <h3 style="font-size:16px; font-weight:800; color:#b45309;">📊 活跃取件监控中枢</h3>
         <button class="nav-link" onclick="loadAdminBoxList()" style="padding:4px 12px; font-size:12px;">🔄 刷新列表</button>
       </div>
 
+      <!-- 🔍 全局模糊/精准搜索框 -->
+      <input type="text" id="adminSearchInput" class="search-input-box" placeholder="🔍 模糊搜索：输入取件码 / 文件名 / 便签内容关键字..." oninput="handleAdminSearch()">
+
       <div id="storageWidget" class="storage-widget">
         <div>
-          💾 快递柜存储占用：<span id="storageUsedText" style="color:#1c1917; font-weight:800;">计算中...</span>
+          💾 快递柜空间占用：<span id="storageUsedText" style="color:#1c1917; font-weight:800;">计算中...</span>
           <span style="font-size:11px; color:var(--text-muted); margin-left:6px;" id="storageCountText"></span>
         </div>
         <div style="display:flex; align-items:center; gap:10px;">
@@ -366,7 +394,7 @@
 
       <div id="sendFormFile">
         <div class="form-group">
-          <label class="form-label">选择文件 (支持 200MB+ 并发极速直传)</label>
+          <label class="form-label">选择文件 (支持 200MB+ 并发直传)</label>
           <input type="file" id="sendFileInput" class="form-control">
         </div>
       </div>
@@ -433,6 +461,7 @@
   <script>
     const API_URL = "";
     let currentSendType = "file";
+    let cachedAdminBoxList = []; // 本地缓存列表用于毫秒级模糊搜索
 
     function getAdminPwd() { return sessionStorage.getItem('panAdminKey') || ""; }
     function getSendPwd() { return localStorage.getItem('panSendKey') || ""; }
@@ -465,12 +494,13 @@
 
     function copyCode(code) {
       navigator.clipboard.writeText(code).then(() => {
-        alert(`📋 取件码【${code}】已成功复制到剪贴板！`);
+        alert(`📋 取件码【${code}】已复制到剪贴板！`);
       }).catch(() => {
         prompt("请手动复制取件码：", code);
       });
     }
 
+    // 极速取件
     async function executePickup(forcedCode) {
       const code = (forcedCode || document.getElementById('pickupCodeInput').value).trim().toUpperCase();
       if (!code) { alert("⚠️ 请输入 5 位取件码！"); return; }
@@ -506,7 +536,16 @@
           textWrap.style.display = 'none';
           fileWrap.style.display = 'block';
           fileSizeEl.innerText = `文件体积：${formatBytes(data.size)}`;
-          dlBtn.onclick = () => { window.location.href = `${API_URL}/api/download?key=${encodeURIComponent(data.r2Key)}&boxCode=${code}`; };
+          // 🚀 优化下载触发：直接交给浏览器与多线程引擎，不占内存
+          dlBtn.onclick = () => {
+            const dlUrl = `${API_URL}/api/download?key=${encodeURIComponent(data.r2Key)}&boxCode=${code}`;
+            const tempA = document.createElement('a');
+            tempA.href = dlUrl;
+            tempA.setAttribute('download', data.name);
+            document.body.appendChild(tempA);
+            tempA.click();
+            document.body.removeChild(tempA);
+          };
         }
       } catch (e) {
         alert("❌ " + e.message);
@@ -566,7 +605,7 @@
       }
     }
 
-    // 🚀 3 线程并发极速分片上传（突破 100MB 限制并拉满上行带宽）
+    // 🚀 3 线程并发极速分片上传
     async function uploadLargeBoxFile(file, expireHours, maxDownloads, sendKey) {
       const toast = document.getElementById('transfer-toast');
       const taskName = document.getElementById('transferTaskName');
@@ -577,7 +616,7 @@
       toast.classList.add('show');
 
       taskName.innerText = `📤 并发极速传送: ${file.name}`;
-      const CHUNK_SIZE = 10 * 1024 * 1024; // 10MB
+      const CHUNK_SIZE = 10 * 1024 * 1024;
       const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
 
       const initRes = await fetch(`${API_URL}/api/box/init-multipart`, {
@@ -593,9 +632,8 @@
       let completedChunks = 0;
       let lastLoaded = 0, lastTime = Date.now();
 
-      // 任务队列
       const chunkIndexes = Array.from({ length: totalChunks }, (_, i) => i);
-      const CONCURRENCY = 3; // 3 线程并发
+      const CONCURRENCY = 3;
 
       async function uploadWorker() {
         while (chunkIndexes.length > 0) {
@@ -649,9 +687,10 @@
       barFill.style.width = `100%`;
       speedText.innerText = `✅ 发送成功！`;
       setTimeout(() => toast.classList.remove('show'), 2000);
-      prompt("🎉 文件已成功存入快递柜！专属取件码：", code);
+      prompt("🎉 文件已存入快递柜！专属取件码：", code);
     }
 
+    // 加载管理列表数据
     async function loadAdminBoxList() {
       const container = document.getElementById('boxListContainer');
       try {
@@ -659,44 +698,90 @@
         const json = await res.json();
         if (!json.success) throw new Error(json.error);
 
-        // 存储统计
+        cachedAdminBoxList = json.data;
+
+        // 容量统计
         let totalBytes = 0;
-        json.data.forEach(item => totalBytes += (item.size || 0));
+        cachedAdminBoxList.forEach(item => totalBytes += (item.size || 0));
         const limit = 10 * 1024 * 1024 * 1024;
         const percent = Math.min((totalBytes / limit) * 100, 100).toFixed(1);
         document.getElementById('storageUsedText').innerText = `${formatBytes(totalBytes)} / 10 GB`;
-        document.getElementById('storageCountText').innerText = `(${json.data.length} 个取件单)`;
+        document.getElementById('storageCountText').innerText = `(${cachedAdminBoxList.length} 个取件单)`;
         document.getElementById('storageBarFill').style.width = `${percent}%`;
         document.getElementById('storagePercentText').innerText = `${percent}%`;
 
-        if (json.data.length === 0) {
-          container.innerHTML = '<p style="color:var(--text-muted); font-size:13px;">当前没有活跃的取件码记录。</p>';
-          return;
-        }
-
-        let html = '';
-        json.data.forEach(item => {
-          html += `
-            <div style="display:flex; justify-content:space-between; align-items:center; background:#fff; padding:12px 14px; border-radius:12px; border:1px solid rgba(245,158,11,0.25); box-shadow:0 2px 6px rgba(245,158,11,0.06);">
-              <div>
-                <div style="display:flex; align-items:center; gap:8px;">
-                  <span class="code-badge" onclick="copyCode('${item.code}')" title="👉 点击直接复制取件码">
-                    📋 ${item.code}
-                  </span>
-                  <span style="font-size:14px; font-weight:700; color:#1c1917;">${item.name}</span>
-                </div>
-                <div style="font-size:11.5px; color:var(--text-muted); margin-top:5px;">
-                  类型: ${item.type} | 体积: ${formatBytes(item.size)} | 剩余下载: ${item.maxDownloads > 0 ? (item.maxDownloads - item.downloadCount) : '不限'}
-                </div>
-              </div>
-              <button class="nav-link" style="color:var(--danger); border-color:rgba(239,68,68,0.3); font-size:12px; padding:5px 10px;" onclick="deleteBoxCode('${item.code}')">销毁</button>
-            </div>
-          `;
-        });
-        container.innerHTML = html;
+        renderAdminList(cachedAdminBoxList);
       } catch (e) {
         container.innerHTML = `<p style="color:var(--danger);">${e.message}</p>`;
       }
+    }
+
+    // 🔍 渲染管理列表（支持高亮匹配）
+    function renderAdminList(list, keyword = "") {
+      const container = document.getElementById('boxListContainer');
+      if (!list || list.length === 0) {
+        container.innerHTML = `<p style="color:var(--text-muted); font-size:13px; padding:10px 0;">${keyword ? '🔍 没有找到匹配的取件记录' : '当前没有活跃的取件码记录。'}</p>`;
+        return;
+      }
+
+      function highlight(text) {
+        if (!keyword || !text) return text;
+        const escaped = keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        return String(text).replace(new RegExp(escaped, 'gi'), match => `<span class="highlight-match">${match}</span>`);
+      }
+
+      let html = '';
+      list.forEach(item => {
+        html += `
+          <div style="display:flex; justify-content:space-between; align-items:center; background:#fff; padding:12px 14px; border-radius:12px; border:1px solid rgba(245,158,11,0.25); box-shadow:0 2px 6px rgba(245,158,11,0.06);">
+            <div>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <span class="code-badge" onclick="copyCode('${item.code}')" title="👉 点击直接复制取件码">
+                  📋 ${highlight(item.code)}
+                </span>
+                <span style="font-size:14px; font-weight:700; color:#1c1917;">${highlight(item.name)}</span>
+              </div>
+              <div style="font-size:11.5px; color:var(--text-muted); margin-top:5px;">
+                类型: ${item.type} | 体积: ${formatBytes(item.size)} | 剩余下载: ${item.maxDownloads > 0 ? (item.maxDownloads - item.downloadCount) : '不限'}
+                ${item.text ? `| 便签: <i>${highlight(item.text.substring(0, 20))}...</i>` : ''}
+              </div>
+            </div>
+            <button class="nav-link" style="color:var(--danger); border-color:rgba(239,68,68,0.3); font-size:12px; padding:5px 10px;" onclick="deleteBoxCode('${item.code}')">销毁</button>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+    }
+
+    // 🔍 实时全局模糊 + 精确双模搜索
+    function handleAdminSearch() {
+      const rawQuery = document.getElementById('adminSearchInput').value.trim().toLowerCase();
+      if (!rawQuery) {
+        renderAdminList(cachedAdminBoxList);
+        return;
+      }
+
+      const keywords = rawQuery.split(/\s+/);
+      const filtered = cachedAdminBoxList.filter(item => {
+        const codeStr = (item.code || '').toLowerCase();
+        const nameStr = (item.name || '').toLowerCase();
+        const textStr = (item.text || '').toLowerCase();
+        const typeStr = (item.type || '').toLowerCase();
+
+        // 所有分词必须全部模糊命中
+        return keywords.every(kw => 
+          codeStr.includes(kw) || nameStr.includes(kw) || textStr.includes(kw) || typeStr.includes(kw)
+        );
+      });
+
+      // 精确匹配取件码的排在最前
+      filtered.sort((a, b) => {
+        if (a.code.toLowerCase() === rawQuery) return -1;
+        if (b.code.toLowerCase() === rawQuery) return 1;
+        return 0;
+      });
+
+      renderAdminList(filtered, rawQuery);
     }
 
     async function deleteBoxCode(code) {
