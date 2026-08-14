@@ -5,11 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>一束阳光 - 专属文件快递柜</title>
   
-  <!-- 🚀 三网与移动 4G/5G 极速网络预连接加速 -->
+  <!-- 🚀 三网与移动 4G/5G 网络预连接加速 -->
   <link rel="dns-prefetch" href="//dash.cloudflare.com">
   <link rel="preconnect" href="/" crossorigin>
 
-  <!-- 萌系太阳矢量 Favicon -->
+  <!-- 萌系治愈太阳矢量 Favicon -->
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='27' fill='none' stroke='%23f59e0b' stroke-width='4' stroke-linecap='round' stroke-dasharray='2 10'/%3E%3Ccircle cx='32' cy='32' r='19' fill='%23fbbf24'/%3E%3Ccircle cx='23' cy='35' r='2.8' fill='%23fb7185' opacity='0.75'/%3E%3Ccircle cx='41' cy='35' r='2.8' fill='%23fb7185' opacity='0.75'/%3E%3Ccircle cx='25' cy='29' r='2.3' fill='%231c1917'/%3E%3Ccircle cx='39' cy='29' r='2.3' fill='%231c1917'/%3E%3Ccircle cx='24.2' cy='28.2' r='0.8' fill='%23ffffff'/%3E%3Ccircle cx='38.2' cy='28.2' r='0.8' fill='%23ffffff'/%3E%3Cpath d='M28 33 Q32 37 36 33' stroke='%231c1917' stroke-width='1.8' stroke-linecap='round' fill='none'/%3E%3C/svg%3E">
   
   <style>
@@ -127,7 +127,7 @@
     }
     .pickup-btn:hover { filter: brightness(1.08); transform: translateY(-1px); }
 
-    /* 取件结果卡片 */
+    /* 取件结果展示区 */
     #pickupResultArea { display: none; margin-top: 20px; text-align: left; }
     .result-card {
       padding: 20px;
@@ -144,7 +144,7 @@
       padding: 14px;
       border-radius: 10px;
       border: 1px dashed rgba(245, 158, 11, 0.4);
-      margin: 12px 0;
+      margin: 12px 0 0 0;
       max-height: 320px;
       overflow-y: auto;
     }
@@ -222,7 +222,7 @@
       font-weight: bold;
     }
 
-    /* 弹窗样式 */
+    /* 弹窗通用样式 */
     .modal-overlay {
       position: fixed; inset: 0;
       background: rgba(0, 0, 0, 0.45);
@@ -339,7 +339,6 @@
           <h3 id="resultTitle" style="font-size:16px; font-weight:800; margin-bottom:4px;">--</h3>
           <div id="resultTextWrap" style="display: none;">
             <div id="resultTextContent" class="result-text-content"></div>
-            <button class="btn-submit" onclick="copyResultText()" style="padding: 10px; font-size: 13px;">📋 一键复制文本内容</button>
           </div>
           <div id="resultFileWrap" style="display: none; margin-top: 12px;">
             <div style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 10px;" id="resultFileSize">文件体积：0 MB</div>
@@ -461,7 +460,7 @@
   <script>
     const API_URL = "";
     let currentSendType = "file";
-    let cachedAdminBoxList = []; // 本地缓存列表用于毫秒级模糊搜索
+    let cachedAdminBoxList = [];
 
     function getAdminPwd() { return sessionStorage.getItem('panAdminKey') || ""; }
     function getSendPwd() { return localStorage.getItem('panSendKey') || ""; }
@@ -500,7 +499,6 @@
       });
     }
 
-    // 极速取件
     async function executePickup(forcedCode) {
       const code = (forcedCode || document.getElementById('pickupCodeInput').value).trim().toUpperCase();
       if (!code) { alert("⚠️ 请输入 5 位取件码！"); return; }
@@ -536,7 +534,6 @@
           textWrap.style.display = 'none';
           fileWrap.style.display = 'block';
           fileSizeEl.innerText = `文件体积：${formatBytes(data.size)}`;
-          // 🚀 优化下载触发：直接交给浏览器与多线程引擎，不占内存
           dlBtn.onclick = () => {
             const dlUrl = `${API_URL}/api/download?key=${encodeURIComponent(data.r2Key)}&boxCode=${code}`;
             const tempA = document.createElement('a');
@@ -551,11 +548,6 @@
         alert("❌ " + e.message);
         resultArea.style.display = 'none';
       }
-    }
-
-    function copyResultText() {
-      const text = document.getElementById('resultTextContent').innerText;
-      navigator.clipboard.writeText(text).then(() => alert("📋 文本内容已成功复制！"));
     }
 
     function openSendModal() {
@@ -605,7 +597,6 @@
       }
     }
 
-    // 🚀 3 线程并发极速分片上传
     async function uploadLargeBoxFile(file, expireHours, maxDownloads, sendKey) {
       const toast = document.getElementById('transfer-toast');
       const taskName = document.getElementById('transferTaskName');
@@ -690,7 +681,6 @@
       prompt("🎉 文件已存入快递柜！专属取件码：", code);
     }
 
-    // 加载管理列表数据
     async function loadAdminBoxList() {
       const container = document.getElementById('boxListContainer');
       try {
@@ -700,7 +690,6 @@
 
         cachedAdminBoxList = json.data;
 
-        // 容量统计
         let totalBytes = 0;
         cachedAdminBoxList.forEach(item => totalBytes += (item.size || 0));
         const limit = 10 * 1024 * 1024 * 1024;
@@ -716,7 +705,6 @@
       }
     }
 
-    // 🔍 渲染管理列表（支持高亮匹配）
     function renderAdminList(list, keyword = "") {
       const container = document.getElementById('boxListContainer');
       if (!list || list.length === 0) {
@@ -753,7 +741,6 @@
       container.innerHTML = html;
     }
 
-    // 🔍 实时全局模糊 + 精确双模搜索
     function handleAdminSearch() {
       const rawQuery = document.getElementById('adminSearchInput').value.trim().toLowerCase();
       if (!rawQuery) {
@@ -768,13 +755,11 @@
         const textStr = (item.text || '').toLowerCase();
         const typeStr = (item.type || '').toLowerCase();
 
-        // 所有分词必须全部模糊命中
         return keywords.every(kw => 
           codeStr.includes(kw) || nameStr.includes(kw) || textStr.includes(kw) || typeStr.includes(kw)
         );
       });
 
-      // 精确匹配取件码的排在最前
       filtered.sort((a, b) => {
         if (a.code.toLowerCase() === rawQuery) return -1;
         if (b.code.toLowerCase() === rawQuery) return 1;
