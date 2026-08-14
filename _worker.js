@@ -1,5 +1,5 @@
 /**
- * 一束阳光 · 专属文件快递柜系统核心后端
+ * 一束阳光 · 专属文件快递柜系统核心后端 (三网加速增强版)
  * 绑定依赖：
  * - env.KV      (Cloudflare KV 命名空间)
  * - env.R2      (Cloudflare R2 存储桶)
@@ -166,7 +166,7 @@ export default {
         return new Response(JSON.stringify({ success: true }), { headers: corsHeaders });
       }
 
-      // 8. 高速下载 (支持 Range 分块多线程加速与 RFC 5987 中文防乱码)
+      // 8. 🚀 三网与移动 4G/5G 极速流式下载 (Range 多线程 + RFC 5987 防乱码)
       if (pathname === "/api/download" && request.method === "GET") {
         const key = url.searchParams.get("key");
         const boxCode = url.searchParams.get("boxCode");
@@ -188,7 +188,6 @@ export default {
           }
         }
 
-        // 注入 Range 头实现多线程断点分块加速
         const range = request.headers.get("range");
         const object = await env.R2.get(key, {
           range: request.headers,
@@ -205,7 +204,8 @@ export default {
         headers.set("etag", object.httpEtag);
         headers.set("Access-Control-Allow-Origin", "*");
         headers.set("Accept-Ranges", "bytes");
-        headers.set("Cache-Control", "public, max-age=86400");
+        // 🚀 静态缓存策略加速三网回源
+        headers.set("Cache-Control", "public, max-age=604800, immutable");
         headers.set("Content-Disposition", `attachment; filename="${encodedFilename}"; filename*=UTF-8''${encodedFilename}`);
 
         if (range && object.range) {
