@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>文件快递柜 - FileCodeBox</title>
+  <title>阳光快递柜</title>
   
-  <!-- 网络预连接与极速加速 -->
+  <!-- 🚀 网络预连接加速 -->
   <link rel="dns-prefetch" href="//dash.cloudflare.com">
   <link rel="preconnect" href="/" crossorigin>
 
-  <!-- 萌系太阳矢量 Favicon -->
+  <!-- 萌系太阳 Favicon -->
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='27' fill='none' stroke='%23f59e0b' stroke-width='4' stroke-linecap='round' stroke-dasharray='2 10'/%3E%3Ccircle cx='32' cy='32' r='19' fill='%23fbbf24'/%3E%3Ccircle cx='23' cy='35' r='2.8' fill='%23fb7185' opacity='0.75'/%3E%3Ccircle cx='41' cy='35' r='2.8' fill='%23fb7185' opacity='0.75'/%3E%3Ccircle cx='25' cy='29' r='2.3' fill='%231c1917'/%3E%3Ccircle cx='39' cy='29' r='2.3' fill='%231c1917'/%3E%3Ccircle cx='24.2' cy='28.2' r='0.8' fill='%23ffffff'/%3E%3Ccircle cx='38.2' cy='28.2' r='0.8' fill='%23ffffff'/%3E%3Cpath d='M28 33 Q32 37 36 33' stroke='%231c1917' stroke-width='1.8' stroke-linecap='round' fill='none'/%3E%3C/svg%3E">
   
   <style>
@@ -20,8 +20,6 @@
       --primary-gradient: linear-gradient(135deg, #6366f1 0%, #d946ef 100%);
       --text-main: #1e293b;
       --text-muted: #64748b;
-      --border-color: #e2e8f0;
-      --dashed-border: #6366f1;
       --danger: #ef4444;
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -167,7 +165,7 @@
       border: 1.5px solid #cbd5e1;
       border-radius: 16px;
       padding: 14px;
-      font-size: 14.5px;
+      font-size: 15px;
       font-family: inherit;
       color: var(--text-main);
       outline: none;
@@ -237,23 +235,39 @@
       transform: translateY(-1px);
     }
 
-    /* 底部切换链接 */
+    /* 底部切换链接栏 (放大字号) */
+    .bottom-bar-actions {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 16px;
+      margin-top: 22px;
+    }
     .footer-toggle-link {
-      text-align: center;
-      margin-top: 18px;
-      font-size: 13.5px;
-      font-weight: 700;
-      color: #6366f1;
+      font-size: 15.5px;
+      font-weight: 800;
+      color: #4f46e5;
       cursor: pointer;
-      display: block;
       transition: 0.2s;
     }
     .footer-toggle-link:hover {
       text-decoration: underline;
-      color: #4338ca;
+      color: #3730a3;
+      transform: translateY(-1px);
+    }
+    .history-link-btn {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: #64748b;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .history-link-btn:hover {
+      color: #4f46e5;
+      text-decoration: underline;
     }
 
-    /* 取件视图 (默认隐藏或切换显示) */
+    /* 取件视图 */
     #pickupView { display: none; }
     .pickup-input {
       width: 100%;
@@ -272,11 +286,86 @@
     .pickup-result-card {
       display: none;
       margin-top: 16px;
-      padding: 16px;
-      border-radius: 14px;
+      padding: 18px;
+      border-radius: 16px;
       background: #f8fafc;
       border: 1px solid #e2e8f0;
       text-align: left;
+    }
+
+    /* 放大提取出的便签内容与标题 */
+    .result-memo-title {
+      font-size: 18px;
+      font-weight: 800;
+      color: #1e293b;
+      margin-bottom: 10px;
+    }
+    .result-memo-content {
+      font-size: 16.5px;
+      font-weight: 500;
+      line-height: 1.7;
+      color: #0f172a;
+      background: #fff;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1.5px solid #cbd5e1;
+      max-height: 320px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    /* 发件记录模态抽屉 */
+    .history-modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0, 0, 0, 0.45);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      display: none; justify-content: center; align-items: center;
+      z-index: 2000; opacity: 0; transition: opacity 0.2s ease;
+      padding: 16px;
+    }
+    .history-modal-overlay.active { display: flex; opacity: 1; }
+    .history-card {
+      width: 100%; max-width: 460px;
+      background: #fff;
+      border-radius: 20px;
+      padding: 24px;
+      max-height: 80vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    }
+    .history-list-box {
+      flex: 1;
+      overflow-y: auto;
+      margin: 14px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .history-item {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      padding: 12px;
+      border-radius: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .history-code-tag {
+      font-size: 14px;
+      font-weight: 800;
+      color: #4f46e5;
+      background: #eef2ff;
+      padding: 2px 8px;
+      border-radius: 6px;
+      cursor: pointer;
+      border: 1px dashed #6366f1;
+    }
+    .history-code-tag:hover {
+      background: #4f46e5;
+      color: #fff;
     }
 
     /* 传输进度 Toast */
@@ -299,12 +388,11 @@
 
   <div class="app-card">
     <div class="title-area">
-      <h1>文件快递柜 <span>FileCodeBox</span></h1>
+      <h1>☀️ 阳光文件快递柜</h1>
     </div>
 
-    <!-- ================= 📤 寄件视图 (主界面) ================= -->
+    <!-- ================= 📤 寄件视图 ================= -->
     <div id="sendView">
-      <!-- 顶部分段切换 -->
       <div class="tab-switch">
         <button class="tab-btn active" id="tabSendFile" onclick="switchSendTab('file')">发送文件</button>
         <button class="tab-btn" id="tabSendText" onclick="switchSendTab('text')">发送文本</button>
@@ -326,9 +414,9 @@
         <div class="selected-file-card" id="selectedFileCard">
           <div>
             <div class="file-name-text" id="selectedFileName">--</div>
-            <div style="font-size: 11px; color:#64748b;" id="selectedFileSize">0 MB</div>
+            <div style="font-size: 11.5px; color:#64748b;" id="selectedFileSize">0 MB</div>
           </div>
-          <button style="color:var(--danger); font-size:12px; font-weight:700;" onclick="clearSelectedFile()">✕ 移除</button>
+          <button style="color:var(--danger); font-size:12.5px; font-weight:700;" onclick="clearSelectedFile()">✕ 移除</button>
         </div>
       </div>
 
@@ -365,12 +453,17 @@
         安全寄送
       </button>
 
-      <div class="footer-toggle-link" onclick="toggleView('pickup')">需要取件？点击这里</div>
+      <!-- 底部切换栏 (文字加大) -->
+      <div class="bottom-bar-actions">
+        <div class="footer-toggle-link" onclick="toggleView('pickup')">需要取件？点击这里</div>
+        <span style="color:#cbd5e1;">|</span>
+        <div class="history-link-btn" onclick="openHistoryModal()">📜 发件记录</div>
+      </div>
     </div>
 
     <!-- ================= 📦 取件视图 ================= -->
     <div id="pickupView">
-      <div style="text-align: center; font-size: 13.5px; color: var(--text-muted); margin-bottom: 16px;">
+      <div style="text-align: center; font-size: 14px; color: var(--text-muted); margin-bottom: 16px;">
         输入 5 位取件码，三网极速提取文件或便签
       </div>
       <input type="text" id="pickupCodeInput" class="pickup-input" placeholder="输入5位取件码" maxlength="6" autocomplete="off" onkeypress="if(event.key==='Enter') executePickup()">
@@ -378,21 +471,42 @@
         ✨ 立即提取
       </button>
 
-      <!-- 取件结果区 -->
+      <!-- 取件结果区 (文字放大) -->
       <div class="pickup-result-card" id="pickupResultArea">
         <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
           <span id="resultTypeBadge" style="font-size:12px; font-weight:800; color:#4338ca; background:#e0e7ff; padding:2px 8px; border-radius:6px;">文件附件</span>
-          <span id="resultExpireBadge" style="font-size:11px; color:#64748b;">有效期至：--</span>
+          <span id="resultExpireBadge" style="font-size:11.5px; color:#64748b;">有效期至：--</span>
         </div>
-        <h4 id="resultTitle" style="font-size:15px; font-weight:800; margin-bottom:8px; word-break:break-all;">--</h4>
-        <div id="resultTextWrap" style="display:none; white-space:pre-wrap; word-break:break-word; background:#fff; padding:10px; border-radius:8px; border:1px solid #e2e8f0; font-size:13.5px; max-height:220px; overflow-y:auto;"></div>
-        <div id="resultFileWrap" style="display:none; margin-top:8px;">
-          <div id="resultFileSize" style="font-size:12px; color:#64748b; margin-bottom:8px;">体积：0 MB</div>
-          <button id="resultDownloadBtn" class="btn-send" style="padding:10px; font-size:14px;">⬇️ 高速下载文件</button>
+        
+        <div class="result-memo-title" id="resultTitle">口令便签</div>
+        <div id="resultTextWrap" style="display:none;" class="result-memo-content"></div>
+        
+        <div id="resultFileWrap" style="display:none; margin-top:10px;">
+          <div id="resultFileSize" style="font-size:12.5px; color:#64748b; margin-bottom:8px;">体积：0 MB</div>
+          <button id="resultDownloadBtn" class="btn-send" style="padding:11px; font-size:14.5px;">⬇️ 高速下载文件</button>
         </div>
       </div>
 
-      <div class="footer-toggle-link" onclick="toggleView('send')">需要发件？点击这里</div>
+      <!-- 底部切换栏 (文字加大) -->
+      <div class="bottom-bar-actions">
+        <div class="footer-toggle-link" onclick="toggleView('send')">需要发件？点击这里</div>
+        <span style="color:#cbd5e1;">|</span>
+        <div class="history-link-btn" onclick="openHistoryModal()">📜 发件记录</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 📜 发件记录模态卡片 -->
+  <div id="historyModal" class="history-modal-overlay">
+    <div class="history-card">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h3 style="font-size:17px; font-weight:800; color:#1e293b;">📜 我的发件记录</h3>
+        <button onclick="closeHistoryModal()" style="font-size:20px; color:#64748b;">&times;</button>
+      </div>
+      <div class="history-list-box" id="historyListContainer">
+        <!-- 动态历史列表 -->
+      </div>
+      <button onclick="clearAllHistory()" style="padding:10px; border-radius:10px; background:#fee2e2; color:#dc2626; font-size:13px; font-weight:700;">🗑️ 清空所有本地发件记录</button>
     </div>
   </div>
 
@@ -421,13 +535,11 @@
       return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
     }
 
-    // 视图切换 (寄件 <-> 取件)
     function toggleView(target) {
       document.getElementById('sendView').style.display = target === 'send' ? 'block' : 'none';
       document.getElementById('pickupView').style.display = target === 'pickup' ? 'block' : 'none';
     }
 
-    // 发送类型切换 (文件 <-> 文本)
     function switchSendTab(type) {
       currentMode = type;
       document.getElementById('tabSendFile').classList.toggle('active', type === 'file');
@@ -436,7 +548,6 @@
       document.getElementById('textInputArea').style.display = type === 'text' ? 'block' : 'none';
     }
 
-    // 过期单位联动
     function handleExpireUnitChange() {
       const unit = document.getElementById('expireUnitSelect').value;
       const wrap = document.getElementById('expireValueInputWrap');
@@ -453,7 +564,6 @@
       }
     }
 
-    // 拖拽捕获与处理
     const dropZone = document.getElementById('dropZone');
     ['dragenter', 'dragover'].forEach(eventName => {
       dropZone.addEventListener(eventName, (e) => { e.preventDefault(); e.stopPropagation(); dropZone.classList.add('dragover'); }, false);
@@ -493,6 +603,58 @@
       dropZone.style.display = 'flex';
     }
 
+    // 保存发件记录到本地
+    function saveSentRecord(record) {
+      let history = JSON.parse(localStorage.getItem('sun_box_sent_history') || '[]');
+      history.unshift(record);
+      if (history.length > 50) history = history.slice(0, 50); // 最多保留50条
+      localStorage.setItem('sun_box_sent_history', JSON.stringify(history));
+    }
+
+    function openHistoryModal() {
+      const modal = document.getElementById('historyModal');
+      const list = document.getElementById('historyListContainer');
+      const history = JSON.parse(localStorage.getItem('sun_box_sent_history') || '[]');
+
+      if (history.length === 0) {
+        list.innerHTML = '<p style="color:#64748b; font-size:13.5px; text-align:center; padding:30px 0;">暂无发件历史记录</p>';
+      } else {
+        let html = '';
+        history.forEach(item => {
+          html += `
+            <div class="history-item">
+              <div>
+                <div style="display:flex; align-items:center; gap:6px;">
+                  <span class="history-code-tag" onclick="copyHistoryCode('${item.code}')" title="点击复制取件码">📋 ${item.code}</span>
+                  <span style="font-size:14px; font-weight:700; color:#1e293b; max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${item.name}</span>
+                </div>
+                <div style="font-size:11.5px; color:#64748b; margin-top:4px;">
+                  ${new Date(item.time).toLocaleDateString()} | ${item.type === 'file' ? formatBytes(item.size) : '文本便签'}
+                </div>
+              </div>
+            </div>
+          `;
+        });
+        list.innerHTML = html;
+      }
+      modal.classList.add('active');
+    }
+
+    function closeHistoryModal() {
+      document.getElementById('historyModal').classList.remove('active');
+    }
+
+    function copyHistoryCode(code) {
+      navigator.clipboard.writeText(code).then(() => alert(`📋 取件码【${code}】已复制到剪贴板！`));
+    }
+
+    function clearAllHistory() {
+      if (confirm("⚠️ 确定要清空本地所有发件记录吗？")) {
+        localStorage.removeItem('sun_box_sent_history');
+        openHistoryModal();
+      }
+    }
+
     // 提交发件
     async function submitSendBox() {
       const sendKey = document.getElementById('sendAuthKey').value.trim() || localStorage.getItem('panSendKey') || "";
@@ -521,6 +683,8 @@
         });
         const json = await res.json();
         if (!json.success) { alert("❌ " + json.error); return; }
+
+        saveSentRecord({ code: json.code, name: '口令便签', type: 'text', time: Date.now() });
         prompt("🎉 寄送成功！专属 5 位取件码：", json.code);
         document.getElementById('textInputArea').value = "";
       } else {
@@ -612,6 +776,8 @@
       barFill.style.width = `100%`;
       speedText.innerText = `✅ 寄送完成！`;
       setTimeout(() => toast.classList.remove('show'), 2000);
+
+      saveSentRecord({ code, name: file.name, type: 'file', size: file.size, time: Date.now() });
       prompt("🎉 文件已存入快递柜！专属 5 位取件码：", code);
     }
 
@@ -666,7 +832,7 @@
       }
     }
 
-    // URL 参数自动提取初始化
+    // URL 参数自动提取
     document.addEventListener('DOMContentLoaded', () => {
       const urlParams = new URLSearchParams(window.location.search);
       const urlCode = urlParams.get('code') || window.location.hash.replace('#', '');
