@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>一束阳光 - 口令传送与云盘</title>
-  <!-- 可爱治愈系太阳 Favicon -->
+  <!-- 可爱治愈系萌萌太阳 Favicon -->
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='27' fill='none' stroke='%23f59e0b' stroke-width='4' stroke-linecap='round' stroke-dasharray='2 10'/%3E%3Ccircle cx='32' cy='32' r='19' fill='%23fbbf24'/%3E%3Ccircle cx='23' cy='35' r='2.8' fill='%23fb7185' opacity='0.75'/%3E%3Ccircle cx='41' cy='35' r='2.8' fill='%23fb7185' opacity='0.75'/%3E%3Ccircle cx='25' cy='29' r='2.3' fill='%231c1917'/%3E%3Ccircle cx='39' cy='29' r='2.3' fill='%231c1917'/%3E%3Ccircle cx='24.2' cy='28.2' r='0.8' fill='%23ffffff'/%3E%3Ccircle cx='38.2' cy='28.2' r='0.8' fill='%23ffffff'/%3E%3Cpath d='M28 33 Q32 37 36 33' stroke='%231c1917' stroke-width='1.8' stroke-linecap='round' fill='none'/%3E%3C/svg%3E">
   
   <style>
@@ -40,11 +40,9 @@
     }
     .container { max-width: 900px; margin: 0 auto; position: relative; z-index: 1; }
     
-    /* 权限控制 */
     body:not(.admin-mode) .admin-only { display: none !important; }
     body.admin-mode .guest-only { display: none !important; }
 
-    /* 顶部导航 */
     .header {
       padding: 14px 0 20px;
       display: flex;
@@ -82,7 +80,6 @@
       transform: translateY(-1px);
     }
 
-    /* 核心取件卡片 */
     .pickup-box {
       padding: 32px 24px;
       text-align: center;
@@ -124,7 +121,6 @@
     }
     .pickup-btn:hover { filter: brightness(1.08); transform: translateY(-1px); }
 
-    /* 取件结果 */
     #pickupResultArea { display: none; margin-top: 20px; text-align: left; }
     .result-card {
       padding: 20px;
@@ -146,7 +142,6 @@
       overflow-y: auto;
     }
 
-    /* 管理员模块面板 */
     .section-tab-bar {
       display: flex;
       gap: 10px;
@@ -247,7 +242,6 @@
     }
     .btn-icon-3d:hover { transform: scale(1.1); }
 
-    /* 弹窗通用样式 */
     .modal-overlay {
       position: fixed; inset: 0;
       background: rgba(0, 0, 0, 0.45);
@@ -266,7 +260,7 @@
       padding: 12px 14px;
       color: var(--text-main);
       outline: none;
-      font-size: 14px;
+      font-size: 16px;
       background: rgba(255, 255, 255, 0.95);
       border: 1px solid rgba(245, 158, 11, 0.35);
       border-radius: 12px;
@@ -285,7 +279,6 @@
     }
     .btn-submit:hover { filter: brightness(1.08); transform: translateY(-1px); }
 
-    /* 上传进度 Toast */
     #transfer-toast {
       position: fixed; bottom: 20px; right: 20px; z-index: 3000;
       width: 320px; padding: 16px 20px;
@@ -304,7 +297,6 @@
 <body>
 
   <div class="container">
-    <!-- 顶部 Header -->
     <header class="header">
       <div class="logo-area">
         <svg class="logo-icon-svg" viewBox="0 0 64 64">
@@ -329,7 +321,7 @@
       </div>
     </header>
 
-    <!-- 📦 核心取件箱（访客与全员首屏） -->
+    <!-- 📦 核心取件箱 -->
     <div class="pickup-box glass">
       <div class="pickup-title">📦 阳光文件快递柜</div>
       <div class="pickup-subtitle">输入 5 位取件码，极速提取加密便签或云端文件</div>
@@ -338,7 +330,6 @@
         <button class="pickup-btn" onclick="executePickup()">✨ 提取</button>
       </div>
 
-      <!-- 取件内容展示区 -->
       <div id="pickupResultArea">
         <div class="result-card">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
@@ -358,14 +349,13 @@
       </div>
     </div>
 
-    <!-- 💾 管理员专属：云盘与快递柜中枢 -->
+    <!-- 💾 管理员专属看板 -->
     <div class="admin-only">
       <div class="section-tab-bar">
         <button class="tab-item-btn active" id="tabBtnPan" onclick="switchAdminTab('pan')">📁 云盘文件库</button>
         <button class="tab-item-btn" id="tabBtnBox" onclick="switchAdminTab('box')">📦 快递柜中枢</button>
       </div>
 
-      <!-- 云盘文件视图 -->
       <div id="adminPanView">
         <div id="storageWidget" class="storage-widget glass">
           <div>
@@ -380,7 +370,6 @@
         <div id="fileGrid" class="grid"><p style="color:var(--text-muted); padding:20px;">🔄 正在加载资料库...</p></div>
       </div>
 
-      <!-- 快递柜监控视图 -->
       <div id="adminBoxView" style="display:none;">
         <div class="glass" style="padding: 20px;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
@@ -411,15 +400,13 @@
         <button class="tab-item-btn" id="sendTabText" onclick="switchSendType('text')">📝 发便签</button>
       </div>
 
-      <!-- 发文件 -->
       <div id="sendFormFile">
         <div class="form-group">
-          <label class="form-label">选择文件 (支持最大 200MB)</label>
+          <label class="form-label">选择文件 (支持最大 200MB+)</label>
           <input type="file" id="sendFileInput" class="form-control">
         </div>
       </div>
 
-      <!-- 发便签 -->
       <div id="sendFormText" style="display: none;">
         <div class="form-group">
           <label class="form-label">便签标题 (可选)</label>
@@ -431,7 +418,6 @@
         </div>
       </div>
 
-      <!-- 时效与防爆仓配置 -->
       <div class="form-group">
         <label class="form-label">⏳ 有效期设置</label>
         <select id="sendExpireTime" class="form-control">
@@ -515,10 +501,18 @@
       return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
     }
 
-    // 取件逻辑
-    async function executePickup() {
-      const code = document.getElementById('pickupCodeInput').value.trim().toUpperCase();
+    function copyCode(code) {
+      navigator.clipboard.writeText(code).then(() => {
+        alert(`📋 取件码【${code}】已成功复制！`);
+      }).catch(() => {
+        prompt("请手动复制取件码：", code);
+      });
+    }
+
+    async function executePickup(forcedCode) {
+      const code = (forcedCode || document.getElementById('pickupCodeInput').value).trim().toUpperCase();
       if (!code) { alert("⚠️ 请输入 5 位取件码！"); return; }
+      document.getElementById('pickupCodeInput').value = code;
 
       const resultArea = document.getElementById('pickupResultArea');
       const titleEl = document.getElementById('resultTitle');
@@ -602,14 +596,12 @@
         const fileInput = document.getElementById('sendFileInput');
         if (!fileInput.files.length) { alert("⚠️ 请选择文件！"); return; }
         const file = fileInput.files[0];
-        if (file.size > 200 * 1024 * 1024) { alert("⚠️ 单文件体积不能超过 200MB！"); return; }
 
         closeModal('sendModal');
         await uploadLargeBoxFile(file, expireHours, maxDownloads, sendKey);
       }
     }
 
-    // 200MB 分片直传逻辑
     async function uploadLargeBoxFile(file, expireHours, maxDownloads, sendKey) {
       const toast = document.getElementById('transfer-toast');
       const taskName = document.getElementById('transferTaskName');
@@ -675,10 +667,9 @@
       barFill.style.width = `100%`;
       speedText.innerText = `✅ 发送成功！`;
       setTimeout(() => toast.classList.remove('show'), 2000);
-      prompt("🎉 200MB 文件已成功存入快递柜！取件码：", code);
+      prompt("🎉 文件已成功存入快递柜！取件码：", code);
     }
 
-    // 管理员云盘模块
     function switchAdminTab(tab) {
       document.getElementById('tabBtnPan').classList.toggle('active', tab === 'pan');
       document.getElementById('tabBtnBox').classList.toggle('active', tab === 'box');
@@ -754,14 +745,86 @@
     async function handleCloudUpload(e) {
       const files = e.target.files;
       if (!files.length || !getAdminPwd()) return;
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        await fetch(`${API_URL}/api/upload?key=pan/${encodeURIComponent(file.name)}`, {
+
+      const toast = document.getElementById('transfer-toast');
+      const taskName = document.getElementById('transferTaskName');
+      const percentText = document.getElementById('transferPercent');
+      const barFill = document.getElementById('transferBarFill');
+      const speedText = document.getElementById('transferSpeed');
+      const sizeText = document.getElementById('transferSize');
+      toast.classList.add('show');
+
+      const CHUNK_SIZE = 10 * 1024 * 1024;
+
+      for (let f = 0; f < files.length; f++) {
+        const file = files[f];
+        const r2Key = `pan/${file.name}`;
+        taskName.innerText = `📤 存入云盘 (${f+1}/${files.length}): ${file.name}`;
+        percentText.innerText = `0%`;
+        barFill.style.width = `0%`;
+
+        const initRes = await fetch(`${API_URL}/api/pan/init-multipart`, {
           method: "POST",
-          headers: { "x-custom-auth": getAdminPwd(), "Content-Type": file.type || "application/octet-stream" },
-          body: file
+          headers: { "Content-Type": "application/json", "x-custom-auth": getAdminPwd() },
+          body: JSON.stringify({ r2Key })
+        });
+        const initJson = await initRes.json();
+        if (!initJson.success) {
+          alert(`❌ 文件 ${file.name} 初始化失败: ` + initJson.error);
+          continue;
+        }
+
+        const { uploadId } = initJson;
+        const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
+        const uploadedParts = [];
+        let lastLoaded = 0, lastTime = Date.now();
+
+        for (let i = 0; i < totalChunks; i++) {
+          const start = i * CHUNK_SIZE;
+          const end = Math.min(start + CHUNK_SIZE, file.size);
+          const chunkBlob = file.slice(start, end);
+          const partNumber = i + 1;
+
+          const partRes = await fetch(`${API_URL}/api/box/upload-part?r2Key=${encodeURIComponent(r2Key)}&uploadId=${uploadId}&partNumber=${partNumber}`, {
+            method: "POST",
+            headers: { "x-custom-auth": getAdminPwd() },
+            body: chunkBlob
+          });
+          const partJson = await partRes.json();
+          if (!partJson.success) {
+            alert("❌ 上传中断");
+            toast.classList.remove('show');
+            return;
+          }
+          uploadedParts.push({ partNumber, etag: partJson.etag });
+
+          const currentLoaded = end;
+          const now = Date.now();
+          const diff = (now - lastTime) / 1000;
+          if (diff >= 0.2) {
+            const speed = (currentLoaded - lastLoaded) / diff;
+            speedText.innerText = `⚡ ${formatBytes(speed)}/s`;
+            lastLoaded = currentLoaded;
+            lastTime = now;
+          }
+          const percent = Math.floor((currentLoaded / file.size) * 100);
+          percentText.innerText = `${percent}%`;
+          barFill.style.width = `${percent}%`;
+          sizeText.innerText = `${formatBytes(currentLoaded)} / ${formatBytes(file.size)}`;
+        }
+
+        await fetch(`${API_URL}/api/pan/complete-multipart`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "x-custom-auth": getAdminPwd() },
+          body: JSON.stringify({ r2Key, uploadId, parts: uploadedParts })
         });
       }
+
+      percentText.innerText = `100%`;
+      barFill.style.width = `100%`;
+      speedText.innerText = `✅ 全部资料已存入云盘！`;
+      setTimeout(() => toast.classList.remove('show'), 2000);
+
       e.target.value = "";
       loadFiles();
       loadStorageStats();
@@ -777,13 +840,19 @@
         let html = '';
         json.data.forEach(item => {
           html += `
-            <div style="display:flex; justify-content:space-between; align-items:center; background:#fff; padding:12px; border-radius:10px; border:1px solid rgba(245,158,11,0.25);">
+            <div style="display:flex; justify-content:space-between; align-items:center; background:#fff; padding:12px 14px; border-radius:12px; border:1px solid rgba(245,158,11,0.25); box-shadow:0 2px 6px rgba(245,158,11,0.06);">
               <div>
-                <span style="font-weight:800; color:#b45309; font-size:16px; margin-right:8px;">${item.code}</span>
-                <span style="font-size:13px; font-weight:700;">${item.name}</span>
-                <div style="font-size:11px; color:var(--text-muted); margin-top:4px;">类型: ${item.type} | 体积: ${formatBytes(item.size)} | 剩余下载: ${item.maxDownloads > 0 ? (item.maxDownloads - item.downloadCount) : '不限'}</div>
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <span onclick="copyCode('${item.code}')" style="cursor:pointer; font-weight:800; color:#b45309; font-size:16px; background:rgba(245,158,11,0.15); padding:2px 8px; border-radius:6px; border:1px dashed rgba(245,158,11,0.5); transition:0.2s;" title="👉 点击直接复制取件码">
+                    📋 ${item.code}
+                  </span>
+                  <span style="font-size:14px; font-weight:700; color:#1c1917;">${item.name}</span>
+                </div>
+                <div style="font-size:11.5px; color:var(--text-muted); margin-top:5px;">
+                  类型: ${item.type} | 体积: ${formatBytes(item.size)} | 剩余下载: ${item.maxDownloads > 0 ? (item.maxDownloads - item.downloadCount) : '不限'}
+                </div>
               </div>
-              <button class="nav-link" style="color:var(--danger); border-color:rgba(239,68,68,0.3); font-size:11px; padding:4px 8px;" onclick="deleteBoxCode('${item.code}')">销毁</button>
+              <button class="nav-link" style="color:var(--danger); border-color:rgba(239,68,68,0.3); font-size:12px; padding:5px 10px;" onclick="deleteBoxCode('${item.code}')">销毁</button>
             </div>
           `;
         });
@@ -802,7 +871,15 @@
       loadStorageStats();
     }
 
-    document.addEventListener('DOMContentLoaded', () => { checkAuth(); });
+    // 页面加载完成初始化（支持 URL 链接直接提取）
+    document.addEventListener('DOMContentLoaded', () => {
+      checkAuth();
+      const urlParams = new URLSearchParams(window.location.search);
+      const urlCode = urlParams.get('code') || window.location.hash.replace('#', '');
+      if (urlCode && urlCode.length >= 4) {
+        executePickup(urlCode);
+      }
+    });
   </script>
 </body>
 </html>
