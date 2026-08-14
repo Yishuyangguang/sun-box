@@ -3,7 +3,6 @@ export default {
     const url = new URL(request.url);
     const pathname = url.pathname;
 
-    // 直接从 Cloudflare 后台读取变量，代码中不保留任何默认明文密码
     const ADMIN_KEY = env.ADMIN || "";
     const SEND_KEY = env.SEND_PWD || env.ADMIN || "";
 
@@ -37,7 +36,6 @@ export default {
           return new Response(JSON.stringify({ success: false, error: "该取件码已过期销毁" }), { headers: corsHeaders });
         }
 
-        // 便签阅后即焚原子计数
         if (record.type === "text" && record.maxDownloads > 0) {
           record.downloadCount = (record.downloadCount || 0) + 1;
           if (record.downloadCount >= record.maxDownloads) {
@@ -132,33 +130,7 @@ export default {
         return new Response(JSON.stringify({ success: true, code: body.code }), { headers: corsHeaders });
       }
 
-      // 6. 管理员监控列表
-      if (pathname === "/api/box/admin-list" && request.method === "GET") {
-        if (request.headers.get("x-custom-auth") !== ADMIN_KEY) {
-          return new Response(JSON.stringify({ success: false, error: "管理员权限拒绝" }), { headers: corsHeaders });
-        }
-
-        const list = await env.KV.list({ prefix: "box:" });
-        const results = [];
-        for (const key of list.keys) {
-          const val = await env.KV.get(key.name);
-          if (val) results.push(JSON.parse(val));
-        }
-        return new Response(JSON.stringify({ success: true, data: results }), { headers: corsHeaders });
-      }
-
-      // 7. 销毁取件码
-      if (pathname === "/api/box/admin-delete" && request.method === "POST") {
-        if (request.headers.get("x-custom-auth") !== ADMIN_KEY) {
-          return new Response(JSON.stringify({ success: false, error: "管理员权限拒绝" }), { headers: corsHeaders });
-        }
-        const { code } = await request.json();
-        const val = await env.KV.get(`box:${code}`);
-        if (val) await destroyBoxItem(env, code, JSON.parse(val));
-        return new Response(JSON.stringify({ success: true }), { headers: corsHeaders });
-      }
-
-      // 8. 极速下载 (Range 多线程分块 + RFC 5987 中文防乱码)
+      // 6. 极速下载 (Range 多线程分块 + RFC 5987 中文防乱码)
       if (pathname === "/api/download" && request.method === "GET") {
         const key = url.searchParams.get("key");
         const boxCode = url.searchParams.get("boxCode");
